@@ -23,8 +23,8 @@ app.post("/generate-questions", async (req, res) => {
     const { role, experience } = req.body;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
+  model: "gemini-2.5-flash"
+});
 
     const prompt = `
 Generate 10 interview questions.

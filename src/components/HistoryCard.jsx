@@ -1,18 +1,26 @@
-function HistoryCard({ history }) {
+function HistoryCard({ history, darkMode }) {
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-xl mt-8">
-      <h1 className="text-2xl font-bold text-purple-600 mb-5">
-        Interview History
-      </h1>
+    <div
+      className={`mt-8 rounded-2xl p-6 shadow ${
+        darkMode ? "bg-gray-800 text-white" : "bg-white"
+      }`}
+    >
+      <h2 className="text-2xl font-bold text-purple-600 mb-4">
+        Previous Interviews
+      </h2>
 
-      {history.map((item, index) => (
-        <div
-          key={index}
-          className="border p-4 rounded-xl mb-3"
-        >
-          Score : {item}
-        </div>
-      ))}
+      {history.length === 0 ? (
+        <p>No interviews yet.</p>
+      ) : (
+        history.map((item, index) => (
+          <div
+            key={index}
+            className="border-b py-3"
+          >
+            Score: {item.score}/100
+          </div>
+        ))
+      )}
     </div>
   );
 }

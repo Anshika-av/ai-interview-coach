@@ -7,11 +7,22 @@ import QuestionCard from "./components/QuestionCard";
 import AnswerBox from "./components/AnswerBox";
 import FeedbackCard from "./components/FeedbackCard";
 import Dashboard from "./components/Dashboard";
-import ResultScreen from "./components/ResultScreen";
 import HistoryCard from "./components/HistoryCard";
 import ThemeToggle from "./components/ThemeToggle";
+import CircularProgress from "./components/CircularProgress";
+import SkillMeter from "./components/SkillMeter";
+import ScoreCard from "./components/ScoreCard";
+import CompanyCard from "./components/CompanyCard";
+import CareerRecommendation from "./components/CareerRecommendation";
+import InterviewHistory from "./components/InterviewHistory";
+import MotivationalQuote from "./components/MotivationalQuote";
+import FloatingStats from "./components/FloatingStats";
+import PerformanceBadge from "./components/PerformanceBadge";
+import ResultScreen from "./components/ResultScreen";
+import { companies } from "./data/companies";
+import { getBadge } from "./utils/badgeUtils";
 
-function App() {
+function App(){
   const [experience, setExperience] = useState("Fresher");
   const [role, setRole] = useState("");
   const [questionList, setQuestionList] = useState([]);
@@ -19,10 +30,17 @@ function App() {
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const [score, setScore] = useState(0);
-  const [history, setHistory] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [score, setScore] = useState(0);
+
+
+  const [history, setHistory] = useState(
+    JSON.parse(localStorage.getItem("history")) || []
+);
+
+  const [communication, setCommunication] = useState(75);
+  const [technical, setTechnical] = useState(80);
+  const [confidence, setConfidence] = useState(70);
 
   useEffect(() => {
     const savedHistory =
@@ -30,6 +48,23 @@ function App() {
 
     setHistory(savedHistory);
   }, []);
+  const badge = getBadge(score);
+  const saveHistory = () => {
+  const newItem = {
+    role,
+    score,
+    date: new Date().toLocaleDateString(),
+  };
+
+  const updatedHistory = [...history, newItem];
+
+  setHistory(updatedHistory);
+
+  localStorage.setItem(
+    "history",
+    JSON.stringify(updatedHistory)
+  );
+};
 
   const generateQuestions = async () => {
     if (!role) {
@@ -96,9 +131,10 @@ function App() {
       const data = await response.json();
 
       setFeedback(data.feedback);
-
-      // temporary scoring
       setScore((prev) => prev + 10);
+      
+
+      
     } catch (error) {
       console.error(error);
       alert("Failed to generate feedback");
@@ -106,12 +142,29 @@ function App() {
   };
 
   const nextQuestion = () => {
-    if (currentQuestion < questionList.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setAnswer("");
-      setFeedback("");
-    }
-  };
+  if (currentQuestion === questionList.length - 1) {
+    const newItem = {
+      role,
+      score,
+      date: new Date().toLocaleDateString(),
+    };
+
+    const updatedHistory = [...history, newItem];
+
+    setHistory(updatedHistory);
+
+    localStorage.setItem(
+      "history",
+      JSON.stringify(updatedHistory)
+    );
+  }
+
+  if (currentQuestion < questionList.length - 1) {
+    setCurrentQuestion(currentQuestion + 1);
+    setAnswer("");
+    setFeedback("");
+  }
+};
 
   const previousQuestion = () => {
     if (currentQuestion > 0) {
@@ -144,6 +197,7 @@ function App() {
           : "bg-gradient-to-br from-purple-50 via-white to-blue-50"
       }`}
     >
+      <FloatingStats score={score} />
       <ThemeToggle
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -176,26 +230,43 @@ function App() {
         {questionList.length > 0 && (
           <div className="mt-10 border rounded-3xl p-8 bg-gray-50">
 
-            <Dashboard score={score} />
+            <Dashboard
+              score={score}
+              darkMode={darkMode}
+            />
+            <PerformanceBadge score={score} />
 
             <ProgressBar
               currentQuestion={currentQuestion}
               totalQuestions={questionList.length}
             />
 
-            <QuestionCard
-              currentQuestion={currentQuestion}
-              totalQuestions={questionList.length}
-              question={questionList[currentQuestion]}
-            />
+            {questionList[currentQuestion] && (
+  <QuestionCard
+    currentQuestion={currentQuestion}
+    totalQuestions={questionList.length}
+    question={questionList[currentQuestion]}
+    darkMode={darkMode}
+  />
+)}
 
             <AnswerBox
               answer={answer}
               setAnswer={setAnswer}
               getFeedback={getFeedback}
+              darkMode={darkMode}
             />
 
-            <FeedbackCard feedback={feedback} />
+           <FeedbackCard
+                feedback={feedback}
+                darkMode={darkMode}
+            />
+            <ResultScreen
+                score={score}
+                 darkMode={darkMode}
+            />
+            <HistoryCard history={history}
+               darkMode={darkMode}/>
 
             <div className="flex justify-between mt-8">
               <button

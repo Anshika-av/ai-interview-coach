@@ -9,9 +9,11 @@ function QuestionCard({
         Question {currentQuestion + 1} of {totalQuestions}
       </h2>
 
-      <div className="bg-white p-5 rounded-xl shadow">
-        <p className="text-lg">{question}</p>
-      </div>
+      <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+  <p className="text-lg text-black dark:text-white">
+    {question}
+  </p>
+</div>
     </>
   );
 }

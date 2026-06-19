@@ -1,16 +1,20 @@
 import CircularProgress from "./CircularProgress";
 import PerformanceBadge from "./PerformanceBadge";
 
-function Dashboard({ score }) {
+function Dashboard({ score, darkMode }) {
   return (
-    <div className="bg-white p-8 rounded-3xl shadow-xl mt-10">
-      <h1 className="text-3xl font-bold text-center text-purple-600 mb-8">
+    <div
+      className={`rounded-2xl p-6 shadow mb-6 ${
+        darkMode ? "bg-gray-700 text-white" : "bg-white"
+      }`}
+    >
+      <h2 className="text-2xl font-bold text-purple-600">
         Dashboard
-      </h1>
+      </h2>
 
-      <CircularProgress score={score} />
-
-      <PerformanceBadge score={score} />
+      <div className="mt-4 text-lg">
+        Overall Score: <span className="font-bold">{score}/100</span>
+      </div>
     </div>
   );
 }
