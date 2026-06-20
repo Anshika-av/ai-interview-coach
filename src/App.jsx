@@ -21,6 +21,11 @@ import PerformanceBadge from "./components/PerformanceBadge";
 import ResultScreen from "./components/ResultScreen";
 import { companies } from "./data/companies";
 import { getBadge } from "./utils/badgeUtils";
+import TechnicalScoreCard from "./components/TechnicalScoreCard";
+import CommunicationScoreCard from "./components/CommunicationScoreCard";
+import ConfidenceScoreCard from "./components/ConfidenceScoreCard";
+import VoiceInput from "./components/VoiceInput";
+import Timer from "./components/Timer";
 
 function App(){
   const [experience, setExperience] = useState("Fresher");
@@ -32,7 +37,7 @@ function App(){
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [score, setScore] = useState(0);
-
+  
 
   const [history, setHistory] = useState(
     JSON.parse(localStorage.getItem("history")) || []
@@ -130,9 +135,17 @@ function App(){
 
       const data = await response.json();
 
-      setFeedback(data.feedback);
-      setScore((prev) => prev + 10);
-      
+setFeedback(data.feedback);
+
+setTechnical(data.technical);
+setCommunication(data.communication);
+setConfidence(data.confidence);
+
+setScore(
+  Math.round(
+    (data.technical + data.communication + data.confidence) / 3
+  )
+);
 
       
     } catch (error) {
@@ -248,7 +261,11 @@ function App(){
     question={questionList[currentQuestion]}
     darkMode={darkMode}
   />
+  
 )}
+<div className="mt-4 flex justify-center">
+  <Timer />
+</div>
 
             <AnswerBox
               answer={answer}
@@ -256,18 +273,9 @@ function App(){
               getFeedback={getFeedback}
               darkMode={darkMode}
             />
-
-           <FeedbackCard
-                feedback={feedback}
-                darkMode={darkMode}
-            />
-            <ResultScreen
-                score={score}
-                 darkMode={darkMode}
-            />
-            <HistoryCard history={history}
-               darkMode={darkMode}/>
-
+            <div className="mt-4">
+  <VoiceInput setAnswer={setAnswer} />
+</div>
             <div className="flex justify-between mt-8">
               <button
                 onClick={previousQuestion}
@@ -288,10 +296,41 @@ function App(){
               </button>
             </div>
 
+           <FeedbackCard
+                feedback={feedback}
+                darkMode={darkMode}
+            />
+            <ResultScreen
+                score={score}
+                 darkMode={darkMode}
+                 technical={technical}
+  communication={communication}
+  confidence={confidence}
+            />
+            <HistoryCard history={history}
+               darkMode={darkMode}/>
+
+        
+
             {currentQuestion === questionList.length - 1 &&
               feedback && (
                 <>
                   <ResultScreen score={score} />
+                  <div className="grid md:grid-cols-3 gap-6 mt-8">
+
+  <TechnicalScoreCard
+    technical={technical}
+  />
+
+  <CommunicationScoreCard
+    communication={communication}
+  />
+
+  <ConfidenceScoreCard
+    confidence={confidence}
+  />
+
+</div>
                   <HistoryCard history={history} />
                 </>
               )}

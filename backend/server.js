@@ -59,27 +59,51 @@ app.post("/feedback", async (req, res) => {
     });
 
     const prompt = `
-You are a professional interviewer.
+You are a professional interview coach.
 
 Evaluate this answer:
 
 "${answer}"
 
-Provide:
+Return ONLY in this exact format:
 
-1. Score out of 10
-2. Strengths
-3. Areas for Improvement
-4. Better Sample Answer
+Technical Score: X
+Communication Score: X
+Confidence Score: X
 
-Format clearly.
+Strengths:
+- point 1
+- point 2
+
+Areas for Improvement:
+- point 1
+- point 2
+
+Better Sample Answer:
+(sample answer)
+
+Scores should be out of 100.
 `;
 
     const result = await model.generateContent(prompt);
 
-    res.json({
-      feedback: result.response.text(),
-    });
+   const text = result.response.text();
+
+const technical =
+  Number(text.match(/Technical Score:\s*(\d+)/)?.[1]) || 80;
+
+const communication =
+  Number(text.match(/Communication Score:\s*(\d+)/)?.[1]) || 80;
+
+const confidence =
+  Number(text.match(/Confidence Score:\s*(\d+)/)?.[1]) || 80;
+
+res.json({
+  feedback: text,
+  technical,
+  communication,
+  confidence,
+});
   } catch (error) {
     console.error(error);
 
