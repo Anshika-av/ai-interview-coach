@@ -15,9 +15,33 @@ function HistoryCard({ history, darkMode }) {
         history.map((item, index) => (
           <div
             key={index}
-            className="border-b py-3"
+            className={`rounded-2xl p-5 mb-4 shadow ${
+              darkMode ? "bg-gray-700" : "bg-gray-100"
+            }`}
           >
-            Score: {item.score}/100
+            <h2 className="font-bold text-xl">
+              💼 {item.role}
+            </h2>
+
+            <p className="mt-2">
+              🏆 Score: {item.score}/100
+            </p>
+
+            <p>
+              💻 Technical: {item.technical}
+            </p>
+
+            <p>
+              🗣 Communication: {item.communication}
+            </p>
+
+            <p>
+              🔥 Confidence: {item.confidence}
+            </p>
+
+            <p className="text-gray-500 mt-2">
+              📅 {item.date}
+            </p>
           </div>
         ))
       )}

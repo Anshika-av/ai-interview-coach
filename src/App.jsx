@@ -26,6 +26,8 @@ import CommunicationScoreCard from "./components/CommunicationScoreCard";
 import ConfidenceScoreCard from "./components/ConfidenceScoreCard";
 import VoiceInput from "./components/VoiceInput";
 import Timer from "./components/Timer";
+import PerformanceChart from "./components/PerformanceChart";
+import AnalyticsCard from "./components/AnalyticsCard";
 
 function App(){
   const [experience, setExperience] = useState("Fresher");
@@ -56,10 +58,13 @@ function App(){
   const badge = getBadge(score);
   const saveHistory = () => {
   const newItem = {
-    role,
-    score,
-    date: new Date().toLocaleDateString(),
-  };
+  role,
+  score,
+  technical,
+  communication,
+  confidence,
+  date: new Date().toLocaleDateString(),
+};
 
   const updatedHistory = [...history, newItem];
 
@@ -157,10 +162,13 @@ setScore(
   const nextQuestion = () => {
   if (currentQuestion === questionList.length - 1) {
     const newItem = {
-      role,
-      score,
-      date: new Date().toLocaleDateString(),
-    };
+  role,
+  score,
+  technical,
+  communication,
+  confidence,
+  date: new Date().toLocaleDateString(),
+};
 
     const updatedHistory = [...history, newItem];
 
@@ -317,7 +325,13 @@ setScore(
                 <>
                   <ResultScreen score={score} />
                   <div className="grid md:grid-cols-3 gap-6 mt-8">
+                  <PerformanceChart
+  technical={technical}
+  communication={communication}
+  confidence={confidence}
+/>
 
+<AnalyticsCard history={history} />
   <TechnicalScoreCard
     technical={technical}
   />
