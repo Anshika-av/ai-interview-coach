@@ -20,17 +20,22 @@ app.get("/", (req, res) => {
 // Generate Questions
 app.post("/generate-questions", async (req, res) => {
   try {
-    const { role, experience } = req.body;
+    const { role, experience, company, difficulty } = req.body;
 
     const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash"
 });
 
     const prompt = `
-Generate 10 interview questions.
+Generate 10 ${difficulty} difficulty ${experience} level interview questions
+for ${role}
+${company ? `for ${company} company` : ""}
+
+Include both technical and HR questions.
 
 Role: ${role}
 Experience: ${experience}
+Difficulty: ${difficulty}
 
 Return only numbered questions.
 `;

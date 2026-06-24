@@ -28,10 +28,15 @@ import VoiceInput from "./components/VoiceInput";
 import Timer from "./components/Timer";
 import PerformanceChart from "./components/PerformanceChart";
 import AnalyticsCard from "./components/AnalyticsCard";
+import DownloadReport from "./components/DownloadReport";
+import SearchBar from "./components/SearchBar";
+import CompanySelector from "./components/CompanySelector";
+import DifficultySelector from "./components/DifficultySelector";
 
 function App(){
   const [experience, setExperience] = useState("Fresher");
   const [role, setRole] = useState("");
+  const [company, setCompany] = useState("");
   const [questionList, setQuestionList] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answer, setAnswer] = useState("");
@@ -39,12 +44,15 @@ function App(){
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [score, setScore] = useState(0);
-  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [difficulty, setDifficulty] = useState("Easy");
 
   const [history, setHistory] = useState(
     JSON.parse(localStorage.getItem("history")) || []
 );
-
+  const filteredHistory = history.filter((item) =>
+  item.role.toLowerCase().includes(searchTerm.toLowerCase())
+);
   const [communication, setCommunication] = useState(75);
   const [technical, setTechnical] = useState(80);
   const [confidence, setConfidence] = useState(70);
@@ -95,6 +103,8 @@ function App(){
           body: JSON.stringify({
             role,
             experience,
+            company,
+            difficulty,
           }),
         }
       );
@@ -232,6 +242,14 @@ setScore(
         <Hero />
 
         <RoleInput role={role} setRole={setRole} />
+        <CompanySelector
+  company={company}
+  setCompany={setCompany}
+/>
+       <DifficultySelector
+  difficulty={difficulty}
+  setDifficulty={setDifficulty}
+/>
 
         <ExperienceCards
           experience={experience}
@@ -315,8 +333,16 @@ setScore(
   communication={communication}
   confidence={confidence}
             />
-            <HistoryCard history={history}
-               darkMode={darkMode}/>
+
+            <SearchBar
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+/>
+
+<HistoryCard
+  history={filteredHistory}
+  darkMode={darkMode}
+/>
 
         
 
@@ -324,6 +350,12 @@ setScore(
               feedback && (
                 <>
                   <ResultScreen score={score} />
+                  <DownloadReport
+                    score={score}
+                    technical={technical}
+                    communication={communication}
+                    confidence={confidence}
+                />
                   <div className="grid md:grid-cols-3 gap-6 mt-8">
                   <PerformanceChart
   technical={technical}
