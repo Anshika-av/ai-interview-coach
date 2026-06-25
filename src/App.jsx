@@ -32,6 +32,9 @@ import DownloadReport from "./components/DownloadReport";
 import SearchBar from "./components/SearchBar";
 import CompanySelector from "./components/CompanySelector";
 import DifficultySelector from "./components/DifficultySelector";
+import AchievementBadge from "./components/AchievementBadge";
+import CompanyBadge from "./components/CompanyBadge";
+
 
 function App(){
   const [experience, setExperience] = useState("Fresher");
@@ -56,6 +59,9 @@ function App(){
   const [communication, setCommunication] = useState(75);
   const [technical, setTechnical] = useState(80);
   const [confidence, setConfidence] = useState(70);
+  const [streak, setStreak] = useState(
+  Number(localStorage.getItem("streak")) || 0
+);
 
   useEffect(() => {
     const savedHistory =
@@ -189,6 +195,9 @@ setScore(
       JSON.stringify(updatedHistory)
     );
   }
+  const newStreak = streak + 1;
+setStreak(newStreak);
+localStorage.setItem("streak", newStreak);
 
   if (currentQuestion < questionList.length - 1) {
     setCurrentQuestion(currentQuestion + 1);
@@ -228,7 +237,10 @@ setScore(
           : "bg-gradient-to-br from-purple-50 via-white to-blue-50"
       }`}
     >
-      <FloatingStats score={score} />
+      <FloatingStats
+  score={score}
+  streak={streak}
+/>
       <ThemeToggle
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -246,6 +258,7 @@ setScore(
   company={company}
   setCompany={setCompany}
 />
+<CompanyBadge company={company} />
        <DifficultySelector
   difficulty={difficulty}
   setDifficulty={setDifficulty}
@@ -273,12 +286,18 @@ setScore(
               score={score}
               darkMode={darkMode}
             />
+            <div className="my-4 flex justify-center">
+  <AchievementBadge score={score} />
+</div>
             <PerformanceBadge score={score} />
 
             <ProgressBar
               currentQuestion={currentQuestion}
               totalQuestions={questionList.length}
             />
+            <div className="flex justify-end mb-4">
+    <Timer currentQuestion={currentQuestion} />
+</div>
 
             {questionList[currentQuestion] && (
   <QuestionCard
@@ -289,9 +308,7 @@ setScore(
   />
   
 )}
-<div className="mt-4 flex justify-center">
-  <Timer />
-</div>
+
 
             <AnswerBox
               answer={answer}
@@ -346,8 +363,7 @@ setScore(
 
         
 
-            {currentQuestion === questionList.length - 1 &&
-              feedback && (
+           {currentQuestion === questionList.length - 1 && feedback && (
                 <>
                   <ResultScreen score={score} />
                   <DownloadReport

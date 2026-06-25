@@ -3,19 +3,27 @@ function FeedbackCard({ feedback, darkMode }) {
 
   return (
     <div
-      className={`mt-8 rounded-xl shadow p-5 ${
+      className={`mt-8 rounded-2xl shadow-xl p-6 border-l-4 border-green-500 ${
         darkMode
           ? "bg-gray-700 text-white"
           : "bg-white"
       }`}
     >
       <h2 className="text-2xl font-bold text-green-600 mb-4">
-        AI Feedback
+        🤖 AI Feedback
       </h2>
 
-      <pre className="whitespace-pre-wrap">
-        {feedback}
-      </pre>
+      <div
+        className={`rounded-xl p-4 ${
+          darkMode
+            ? "bg-gray-800"
+            : "bg-gray-50"
+        }`}
+      >
+        <p className="whitespace-pre-wrap leading-relaxed">
+          {feedback}
+        </p>
+      </div>
     </div>
   );
 }
