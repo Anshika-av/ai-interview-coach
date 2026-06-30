@@ -1,7 +1,7 @@
 function Dashboard({ score, darkMode }) {
   return (
     <div
-      className={`rounded-2xl p-6 shadow-xl mb-6 ${
+      className={`rounded-2xl p-6 shadow mb-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ${
         darkMode
           ? "bg-gray-700 text-white"
           : "bg-white"

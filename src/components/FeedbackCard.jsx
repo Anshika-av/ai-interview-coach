@@ -3,7 +3,7 @@ function FeedbackCard({ feedback, darkMode }) {
 
   return (
     <div
-      className={`mt-8 rounded-2xl shadow-xl p-6 border-l-4 border-green-500 ${
+     className={`mt-8 rounded-xl shadow p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ${
         darkMode
           ? "bg-gray-700 text-white"
           : "bg-white"

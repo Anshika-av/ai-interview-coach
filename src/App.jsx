@@ -34,7 +34,8 @@ import CompanySelector from "./components/CompanySelector";
 import DifficultySelector from "./components/DifficultySelector";
 import AchievementBadge from "./components/AchievementBadge";
 import CompanyBadge from "./components/CompanyBadge";
-
+import InterviewStats from "./components/InterviewStats";
+import CareerInsights from "./components/CareerInsights";
 
 function App(){
   const [experience, setExperience] = useState("Fresher");
@@ -214,20 +215,7 @@ localStorage.setItem("streak", newStreak);
     }
   };
 
-  useEffect(() => {
-    if (
-      currentQuestion === questionList.length - 1 &&
-      feedback &&
-      questionList.length > 0
-    ) {
-      const newHistory = [...history, score];
-      setHistory(newHistory);
-      localStorage.setItem(
-        "history",
-        JSON.stringify(newHistory)
-      );
-    }
-  }, [currentQuestion, feedback]);
+  
 
   return (
     <div
@@ -286,6 +274,7 @@ localStorage.setItem("streak", newStreak);
               score={score}
               darkMode={darkMode}
             />
+            
             <div className="my-4 flex justify-center">
   <AchievementBadge score={score} />
 </div>
@@ -355,7 +344,19 @@ localStorage.setItem("streak", newStreak);
   searchTerm={searchTerm}
   setSearchTerm={setSearchTerm}
 />
-
+<InterviewStats
+  history={history}
+  streak={streak}
+/>
+<PerformanceChart
+  history={history}
+/>
+<CareerInsights
+  score={score}
+  technical={technical}
+  communication={communication}
+  confidence={confidence}
+/>
 <HistoryCard
   history={filteredHistory}
   darkMode={darkMode}
@@ -367,11 +368,14 @@ localStorage.setItem("streak", newStreak);
                 <>
                   <ResultScreen score={score} />
                   <DownloadReport
-                    score={score}
-                    technical={technical}
-                    communication={communication}
-                    confidence={confidence}
-                />
+  role={role}
+  company={company}
+  difficulty={difficulty}
+  score={score}
+  technical={technical}
+  communication={communication}
+  confidence={confidence}
+/>
                   <div className="grid md:grid-cols-3 gap-6 mt-8">
                   <PerformanceChart
   technical={technical}
