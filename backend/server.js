@@ -37,14 +37,28 @@ Role: ${role}
 Experience: ${experience}
 Difficulty: ${difficulty}
 
-Return only numbered questions.
+Return exactly 10 interview questions.
+
+Each question should be on a new line.
+
+Do not write headings.
+Do not write introductions.
+Do not write explanations.
+Only return the questions.
 `;
 
     const result = await model.generateContent(prompt);
 
-    res.json({
-      questions: result.response.text(),
-    });
+const text = result.response.text();
+
+const questions = text
+  .split("\n")
+  .filter((line) => line.trim() !== "")
+  .map((line) => line.replace(/^\d+\.\s*/, "").trim());
+
+res.json({
+  questions,
+});
   } catch (error) {
     console.error(error);
 

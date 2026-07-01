@@ -37,6 +37,8 @@ import CompanyBadge from "./components/CompanyBadge";
 import InterviewStats from "./components/InterviewStats";
 import CareerInsights from "./components/CareerInsights";
 
+
+
 function App(){
   const [experience, setExperience] = useState("Fresher");
   const [role, setRole] = useState("");
@@ -50,6 +52,8 @@ function App(){
   const [score, setScore] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
 
   const [history, setHistory] = useState(
     JSON.parse(localStorage.getItem("history")) || []
@@ -90,91 +94,94 @@ function App(){
     JSON.stringify(updatedHistory)
   );
 };
+const generateQuestions = async () => {
+  if (!role) {
+    alert("Please enter a job role");
+    return;
+  }
 
-  const generateQuestions = async () => {
-    if (!role) {
-      alert("Please enter a job role");
-      return;
-    }
+  try {
+    setLoading(true);
 
-    try {
-      setLoading(true);
+    const response = await fetch(
+      "http://127.0.0.1:3001/generate-questions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role,
+          experience,
+          company,
+          difficulty,
+        }),
+      }
+    );
 
-      const response = await fetch(
-        "http://127.0.0.1:3001/generate-questions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            role,
-            experience,
-            company,
-            difficulty,
-          }),
-        }
-      );
+    const data = await response.json();
 
-      const data = await response.json();
+console.log("Questions:", data.questions);
+console.log("Type:", typeof data.questions);
+console.log("Length:", data.questions.length);
 
-      const arr = data.questions
-        .split("\n")
-        .filter((q) => q.trim() !== "");
+setQuestionList(data.questions);
 
-      setQuestionList(arr);
-      setCurrentQuestion(0);
-      setAnswer("");
-      setFeedback("");
-      setScore(0);
-    } catch (error) {
-      console.error(error);
-      alert("Failed to generate questions");
-    } finally {
-      setLoading(false);
-    }
-  };
+    
+
+  } catch (error) {
+  console.error(error);
+  alert("Failed to generate questions.");
+} finally {
+  setLoading(false);
+}
+};
 
   const getFeedback = async () => {
-    if (!answer) {
-      alert("Please enter an answer");
-      return;
-    }
+  if (!answer) {
+    alert("Please enter an answer");
+    return;
+  }
 
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:3001/feedback",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            answer,
-          }),
-        }
-      );
+  try {
+    setLoadingFeedback(true);
 
-      const data = await response.json();
+    const response = await fetch(
+      "http://127.0.0.1:3001/feedback",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          answer,
+        }),
+      }
+    );
 
-setFeedback(data.feedback);
+    const data = await response.json();
 
-setTechnical(data.technical);
-setCommunication(data.communication);
-setConfidence(data.confidence);
 
-setScore(
-  Math.round(
-    (data.technical + data.communication + data.confidence) / 3
-  )
-);
+    setFeedback(data.feedback);
 
-      
-    } catch (error) {
-      console.error(error);
-      alert("Failed to generate feedback");
-    }
-  };
+    setTechnical(data.technical);
+    setCommunication(data.communication);
+    setConfidence(data.confidence);
+
+    setScore(
+      Math.round(
+        (data.technical +
+          data.communication +
+          data.confidence) / 3
+      )
+    );
+  } catch (error) {
+    console.error(error);
+    alert("Failed to generate feedback");
+  } finally {
+    setLoadingFeedback(false);
+  }
+};
 
   const nextQuestion = () => {
   if (currentQuestion === questionList.length - 1) {
@@ -257,15 +264,13 @@ localStorage.setItem("streak", newStreak);
           setExperience={setExperience}
         />
 
-        <button
-          onClick={generateQuestions}
-          disabled={loading}
-          className="w-full mt-8 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl text-lg font-semibold"
-        >
-          {loading
-            ? "Generating Questions..."
-            : "✨ Generate Interview Questions"}
-        </button>
+       <button
+  onClick={generateQuestions}
+  disabled={loading}
+  className="bg-purple-600 text-white px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {loading ? "🤖 Generating Questions..." : "Generate Interview"}
+</button>
 
         {questionList.length > 0 && (
           <div className="mt-10 border rounded-3xl p-8 bg-gray-50">
@@ -300,11 +305,12 @@ localStorage.setItem("streak", newStreak);
 
 
             <AnswerBox
-              answer={answer}
-              setAnswer={setAnswer}
-              getFeedback={getFeedback}
-              darkMode={darkMode}
-            />
+  answer={answer}
+  setAnswer={setAnswer}
+  getFeedback={getFeedback}
+  darkMode={darkMode}
+  loadingFeedback={loadingFeedback}
+/>
             <div className="mt-4">
   <VoiceInput setAnswer={setAnswer} />
 </div>

@@ -3,6 +3,7 @@ function AnswerBox({
   setAnswer,
   getFeedback,
   darkMode,
+  loadingFeedback,
 }) {
   return (
     <div
@@ -26,11 +27,15 @@ function AnswerBox({
         : "bg-white border-gray-200 text-black placeholder-gray-500"
     }`}
 />
-      <button
-        onClick={getFeedback}
-       className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all duration-200">
-        🤖 Get AI Feedback
-      </button>
+     <button
+  onClick={getFeedback}
+  disabled={loadingFeedback}
+  className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {loadingFeedback
+    ? "🧠 Analyzing your answer..."
+    : "🤖 Get AI Feedback"}
+</button>
     </div>
   );
 }
